@@ -25,6 +25,9 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
+        # Active Jobによる非同期実行が内部で動いている(deliver_nowもActiveJobのメソッド)
+        # ActiveJobと同じようにdeliver_laterメソッドやwaitメソッドなどが使える
+        UserMailer.with(to: @user.email, name: @user.name).welcome.delever_now
         format.html { redirect_to user_url(@user), notice: "User was successfully created." }
         format.json { render :show, status: :created, location: @user }
       else
